@@ -1,6 +1,6 @@
 import bpy
 import time
-
+import csv
 
 class ShopConnectSample(bpy.types.Panel):
     bl_label = "ShopInfo"
@@ -23,6 +23,12 @@ class ShopConnectSample(bpy.types.Panel):
         row = layout.row()
         row.label(text="売り子一覧", icon='WORLD_DATA')
 
+        row = layout.row()
+        row.operator("mycustom.button")
+
+        row = layout.row()
+        row.label(text="商品一覧", icon='WORLD_DATA')
+
 
 
 class ShopCusttomButton(bpy.types.Operator):
@@ -32,8 +38,6 @@ class ShopCusttomButton(bpy.types.Operator):
     @classmethod
     def poll(cls, context):
         print("myint print")
-        object = bpy.data.objects["metashop"]
-        bpy.data.objects.active = object
 
         return{"FINISHED"}
 
@@ -55,22 +59,26 @@ regist_classes = (
 for regist_cls in regist_classes:
     bpy.utils.register_class(regist_cls)
 
+locations = []
+
+# アニメーションマスターを編集する.
+# アクションと紐づけたりする企画側が入力する
+with open("D:\\devellop\\DigitalPortal\\ContentsArtChallenge\\technicalartchallenge\\script\\animation.csv", newline='') as animationcsv:
+
+    boxreader = csv.reader(animationcsv, delimiter=",")
+    # x,y, zの順番でデータを設定
+    for row in boxreader:
+        locations.append([int(row[0]), int(row[1]), int(row[2])])
+
+
 
 # blenderでアニメーションをさせるオブジェクトを一つ指定する
 obj = bpy.context.scene.objects[0]
 
-locations = (
-    (0, 0, 2),
-    (0, 3, 4),
-    (0, 3, 8),
-    (0, 13, 8),
-    (5, 13, 8),
-    (5, 23, 8),
-
-)
 
 i = 0
 for location in locations:
+    print(location)
     obj.location = location
-    obj.keyframe_insert(data_path="location", frame=5.0*i)
+    obj.keyframe_insert(data_path="location", frame=10.0*i)
     i += 1
